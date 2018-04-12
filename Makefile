@@ -2,7 +2,7 @@ CFLAGS 	+= -std=gnu11 -ffreestanding -ffunction-sections -fdata-sections -Wall -
 LDFLAGS += -Wl,--gc-sections -nostartfiles -lgcc
 EXE = build/bare.elf
 
-include devices/stm32f103rb.mk
+include devices/msp432.mk
 
 .PHONY: all
 all: $(EXE)
