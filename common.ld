@@ -6,8 +6,8 @@ SECTIONS
 		KEEP(*(.isr_vector))
 		KEEP(*(.text))
         ASSERT(. != __isr_vector_start__, "The .isr_vector section is empty");
-	} >FLASH
+	} >RAM
 
-    .rodata : { *(.rodata*) } >FLASH
+    .rodata : { *(.rodata*) } >RAM
     .bss : { *(.bss*) } >RAM
 }

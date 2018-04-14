@@ -1,7 +1,7 @@
 CFLAGS 	+= -std=gnu11 -ffreestanding -ffunction-sections -fdata-sections -Wall -Winline -fdiagnostics-color=always -Os -flto -ffat-lto-objects -g3 -I.
 LDFLAGS += -Wl,--gc-sections -nostartfiles -lgcc
 
-include devices/stm32f103xx/stm32f103rb.mk
+include devices/msp432/msp432.mk
 
 .PHONY: elf
 elf: build/$(EXE_NAME).elf
@@ -23,9 +23,8 @@ flash: build/$(EXE_NAME).elf
 		-s "/usr/share/openocd/scripts" \
 		$(OPENOCD_CFG) \
 	    -c "init" \
-		-c "arm semihosting enable" \
 	    -c "reset halt" \
 	    -c "poll" \
-		-c "$(OPENOCD_UPLOAD_CMD) $<" \
+		-c "flash write_image $<" \
 	    -c "reset" \
 	    -c "shutdown"

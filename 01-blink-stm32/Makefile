@@ -1,4 +1,4 @@
-export EXE_NAME = 01-blink
+export EXE_NAME = 01-blink-stm32
 
 .PHONY: default
 default: elf
