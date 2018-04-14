@@ -12,7 +12,7 @@ The default device chosen is STM32F1 Nucleo. To change to MSP432 Launchpad, edit
 
 ## Usage
 
-To build the executable: (`bare.c` &rarr; `build/bare.elf`), open the console and
+To build the executable, `cd` into the folder, open the console and
 ```shell
 $ make
 ```
@@ -21,4 +21,4 @@ To flash the executable onto the board,
 ```shell
 $ make flash
 ```
-sudo may be required to flash the image onto MSP432. 
+sudo may be required to flash the image onto MSP432.
