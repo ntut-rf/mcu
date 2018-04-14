@@ -1,17 +1,29 @@
 CFLAGS 	+= -std=gnu11 -ffreestanding -ffunction-sections -fdata-sections -Wall -Winline -fdiagnostics-color=always -Os -flto -ffat-lto-objects -g3 -I.
 LDFLAGS += -Wl,--gc-sections -nostartfiles -lgcc
 
-include devices/msp432/msp432.mk
+include devices/stm32f103xx/stm32f103rb.mk
 
 .PHONY: elf
 elf: build/$(EXE_NAME).elf
 
-build/%.o: %/*.c
-	mkdir -p build/
-	arm-none-eabi-gcc $(CFLAGS) -c $^ -o $@
+OBJ := $(patsubst %.c, build/%.c.o, $(wildcard $(EXE_NAME)/*.c)) build/startup.S.o build/isr.s.o
 
-build/%.elf: build/%.o
-	arm-none-eabi-gcc $(CFLAGS) $(LDFLAGS) $< -o $@
+$(info OBJ: $(OBJ))
+
+build/%.c.o: %.c
+	mkdir -p $(@D)
+	arm-none-eabi-gcc $(CFLAGS) -c $< -o $@
+
+build/%.S.o: %.S
+	mkdir -p $(@D)
+	arm-none-eabi-gcc $(CFLAGS) -c $< -o $@
+
+build/%.s.o: %.s
+	mkdir -p $(@D)
+	arm-none-eabi-gcc $(CFLAGS) -c $< -o $@
+
+build/%.elf: $(OBJ)
+	arm-none-eabi-gcc $(CFLAGS) $(LDFLAGS) $^ -o $@
 
 .PHONY: clean
 clean:
@@ -25,6 +37,6 @@ flash: build/$(EXE_NAME).elf
 	    -c "init" \
 	    -c "reset halt" \
 	    -c "poll" \
-		-c "flash write_image $<" \
+		-c "$(OPENOCD_WRITE_CMD) $<" \
 	    -c "reset" \
 	    -c "shutdown"
