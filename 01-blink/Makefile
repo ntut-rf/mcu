@@ -1,4 +1,4 @@
-export EXE_NAME = 01-blink-stm32
+export EXE_NAME = 01-blink
 export DEVICE = STM32F103RB
 
 .PHONY: default

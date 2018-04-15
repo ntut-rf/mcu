@@ -1,6 +1,6 @@
 #include <stdint.h>
-#include "devices/stm32f103xx/rcc.h"
-#include "devices/stm32f103xx/gpio.h"
+#include "barebsp/devices/stm32f103xx/rcc.h"
+#include "barebsp/devices/stm32f103xx/gpio.h"
 
 /* For STM32F103 Technical Reference, see http://www.st.com/resource/en/reference_manual/cd00171190.pdf */
 
