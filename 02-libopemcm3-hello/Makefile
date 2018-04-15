@@ -18,4 +18,4 @@ endif
 
 CFLAGS += -flto -fno-fat-lto-objects
 
-include ../rules.mk
+include ../libopencm3.mk

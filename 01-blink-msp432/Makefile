@@ -6,4 +6,4 @@ default: elf
 
 .PHONY: %
 %:
-	$(MAKE) -C.. -f common.mk $*
+	$(MAKE) -C.. -f barebsp/common.mk $*

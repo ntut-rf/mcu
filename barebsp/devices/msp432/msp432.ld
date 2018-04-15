@@ -1,7 +1,7 @@
 MEMORY
 {
-    FLASH   (rwx)   : ORIGIN = 0x08000000, LENGTH = 128K
-    RAM     (rwx)   : ORIGIN = 0x20000000, LENGTH = 20K
+    FLASH   (rwx)   : ORIGIN = 0x00000000, LENGTH = 0x40000
+    RAM     (rwx)   : ORIGIN = 0x20000000, LENGTH = 0x10000
 }
 
 /*
@@ -14,4 +14,4 @@ MEMORY
 _Min_Heap_Size  = 0x200;    /* required amount of heap */
 _Min_Stack_Size = 0x400;    /* required amount of stack */
 
-INCLUDE common.ld
+INCLUDE barebsp/common.ld

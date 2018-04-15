@@ -1,19 +1,19 @@
 CFLAGS 	+= -std=gnu11 -ffreestanding -ffunction-sections -fdata-sections -Wall -Winline -fdiagnostics-color=always -Os -flto -ffat-lto-objects -g3 -I.
 LDFLAGS += -Wl,--gc-sections -nostartfiles -lgcc
 
+$(info DEVICE: $(DEVICE))
+
 ifeq ($(DEVICE),STM32F103RB)
-	include devices/stm32f103xx/stm32f103rb.mk
+	include barebsp/devices/stm32f103xx/stm32f103rb.mk
 endif
 ifeq ($(DEVICE),MSP432)
-	include devices/msp432/msp432.mk
+	include barebsp/devices/msp432/msp432.mk
 endif
 
 .PHONY: elf
 elf: build/$(EXE_NAME).elf
 
-OBJ := $(patsubst %.c, build/%.c.o, $(wildcard $(EXE_NAME)/*.c)) build/startup.S.o build/isr.s.o
-
-$(info OBJ: $(OBJ))
+OBJ := $(patsubst %.c, build/%.c.o, $(wildcard $(EXE_NAME)/*.c)) build/barebsp/startup.S.o build/barebsp/isr.s.o
 
 build/%.c.o: %.c
 	mkdir -p $(@D)
