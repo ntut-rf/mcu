@@ -18,6 +18,6 @@ typedef struct RCC_t
 } RCC_t;
 
 #define RCC_BASE 0x40021000
-#define RCC ((RCC_t*)RCC_BASE)
+#define RCC ((volatile RCC_t*)RCC_BASE)
 
 #endif

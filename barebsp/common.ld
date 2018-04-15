@@ -5,7 +5,7 @@
  * ARM toolchains (_sidata, _sdata, _edata, _sbss, _ebss) and sets the entry
  * point to Reset_Handler.
  *
- * Adapt FLASH/RAM size for your particular device below.
+ * Adapt rom/ram size for your particular device below.
  *
  * @author      Bjørn Forsman
  * edited by    En Shih
@@ -15,10 +15,10 @@
 ENTRY(Reset_Handler)
 
 /*
- * The stack starts at the end of RAM and grows downwards. Full-descending
+ * The stack starts at the end of ram and grows downwards. Full-descending
  * stack; decrement first, then store.
  */
-_estack = ORIGIN(RAM) + LENGTH(RAM);
+_estack = ORIGIN(ram) + LENGTH(ram);
 
 SECTIONS
 {
@@ -31,7 +31,7 @@ SECTIONS
         . = ALIGN(4);
         __isr_vector_end__ = .;
         ASSERT(. != __isr_vector_start__, "The .isr_vector section is empty");
-    } >RAM AT>FLASH /* load vector table into RAM */
+    } >ram AT>rom /* load vector table into ram */
 
     /* LMA address of data section */
     _siisr = LOADADDR(.isr_vector);
@@ -58,16 +58,16 @@ SECTIONS
 
         . = ALIGN(4);
         _etext = .;
-    } >FLASH
+    } >rom
 
-    /* Constant data goes into FLASH */
+    /* Constant data goes into rom */
     .rodata :
     {
       . = ALIGN(4);
       *(.rodata)         /* .rodata sections (constants, strings, etc.) */
       *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
       . = ALIGN(4);
-    } >FLASH
+    } >rom
 
     /*
      * Stack unwinding and exception handling sections.
@@ -82,13 +82,13 @@ SECTIONS
     .ARM.extab : /* exception unwinding information */
     {
         *(.ARM.extab*)
-    } >FLASH
+    } >rom
     .ARM.exidx : /* index entries for section unwinding */
     {
         __exidx_start = .;
         *(.ARM.exidx*)
         __exidx_end = .;
-    } >FLASH
+    } >rom
 
     /*
      * Newlib and Eglibc (at least) need these for C++ support.
@@ -100,28 +100,28 @@ SECTIONS
         PROVIDE_HIDDEN(__preinit_array_start = .);
         KEEP(*(.preinit_array*))
         PROVIDE_HIDDEN(__preinit_array_end = .);
-    } >FLASH
+    } >rom
     .init_array :
     {
         PROVIDE_HIDDEN(__init_array_start = .);
         KEEP(*(SORT(.init_array.*)))
         KEEP(*(.init_array*))
         PROVIDE_HIDDEN(__init_array_end = .);
-    } >FLASH
+    } >rom
     .fini_array :
     {
         PROVIDE_HIDDEN(__fini_array_start = .);
         KEEP(*(SORT(.fini_array.*)))
         KEEP(*(.fini_array*))
         PROVIDE_HIDDEN(__fini_array_end = .);
-    } >FLASH
+    } >rom
 
     /* LMA address of data section; used by the startup to initialize data */
     _sidata = LOADADDR(.data);
 
     /*
-     * Initialized data section. This section is programmed into FLASH (LMA
-     * address) and copied to RAM (VMA address) in startup code.
+     * Initialized data section. This section is programmed into rom (LMA
+     * address) and copied to ram (VMA address) in startup code.
      */
     .data :
     {
@@ -131,12 +131,12 @@ SECTIONS
         *(.data*)          /* .data* sections */
         . = ALIGN(4);
         _edata = .;
-    } >RAM AT>FLASH
+    } >ram AT>rom
 
     /* LMA address of ccmram section */
     _siccmram = LOADADDR(.ccmram);
 
-    /* CCM-RAM section
+    /* CCM-ram section
     *
     * IMPORTANT NOTE!
     * If initialized variables will be placed in this section,
@@ -151,20 +151,20 @@ SECTIONS
 
       . = ALIGN(4);
       _eccmram = .;       /* create a global symbol at ccmram end */
-    } >CCMRAM AT> FLASH
+    } >CCMRAM AT> rom
 
-    /* Persistent variables saved in FLASH */
-    .flashvar :
+    /* Persistent variables saved in rom */
+    .romvar :
     {
       . = ALIGN(2048);
-      _sflashvar = .;
-      *(.flashvar)         /* .flashvar sections */
-      *(.flashvar*)        /* .flashvar* sections */
-      KEEP(*(.flashvar))
-      KEEP(*(.flashvar*))
-      _eflashvar = .;
+      _sromvar = .;
+      *(.romvar)         /* .romvar sections */
+      *(.romvar*)        /* .romvar* sections */
+      KEEP(*(.romvar))
+      KEEP(*(.romvar*))
+      _eromvar = .;
       . = ALIGN(2048);
-    } >FLASH
+    } >rom
 
     /* Uninitialized data section (zeroed out by startup code) */
     .bss :
@@ -178,9 +178,9 @@ SECTIONS
         . = ALIGN(4);
         _ebss = .;
         __bss_end__ = _ebss;
-    } >RAM
+    } >ram
 
-    /* User_heap_stack section, used to check that there is enough RAM left */
+    /* User_heap_stack section, used to check that there is enough ram left */
     ._user_heap_stack :
     {
       . = ALIGN(8);
@@ -189,7 +189,7 @@ SECTIONS
       . = . + _Min_Heap_Size;
       . = . + _Min_Stack_Size;
       . = ALIGN(8);
-    } >RAM
+    } >ram
 
     /* Remove information from the standard libraries */
     /DISCARD/ :

@@ -1,4 +1,4 @@
-CFLAGS 	+= -std=gnu11 -ffreestanding -ffunction-sections -fdata-sections -Wall -Winline -fdiagnostics-color=always -Os -flto -ffat-lto-objects -g3 -I.
+CFLAGS 	+= -std=gnu11 -ffreestanding -ffunction-sections -fdata-sections -Wall -Winline -fdiagnostics-color=always -O1 -flto -ffat-lto-objects -g3 -I.
 LDFLAGS += -Wl,--gc-sections -nostartfiles -lgcc
 
 $(info DEVICE: $(DEVICE))

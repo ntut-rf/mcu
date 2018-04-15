@@ -15,6 +15,6 @@ typedef struct GPIO_t
 } GPIO_t;
 
 #define GPIOA_BASE 0x40010800
-#define GPIOA ((GPIO_t*)GPIOA_BASE)
+#define GPIOA ((volatile GPIO_t*)GPIOA_BASE)
 
 #endif

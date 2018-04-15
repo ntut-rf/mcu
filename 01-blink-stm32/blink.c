@@ -1,10 +1,10 @@
 #include <stdint.h>
-#include "devices/stm32f103xx/rcc.h"
-#include "devices/stm32f103xx/gpio.h"
+#include "barebsp/devices/stm32f103xx/rcc.h"
+#include "barebsp/devices/stm32f103xx/gpio.h"
 
 /* For STM32F103 Technical Reference, see http://www.st.com/resource/en/reference_manual/cd00171190.pdf */
 
-void Reset_Handler (void)
+void main (void)
 {
     /* Set bit 2 of the RCC_APB2ENR register. This enables the GPIOA peripheral clock, required for functions of the GPIOA port.
        See page 113 of the Reference manual for more information. */
@@ -24,11 +24,3 @@ void Reset_Handler (void)
         for (int i = 0; i < 1000000; i++) ;
     }
 }
-
-/* This is the vector table, which lists the functions pointers that will be called on reset and on interrupts */
-__attribute((section(".isr_vector"))) __attribute__((used))
-uint32_t *isr_vectors[] =
-{
-	0,
-	(uint32_t *) Reset_Handler,	/* code entry point on CPU reset */
-};
