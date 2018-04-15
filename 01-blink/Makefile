@@ -1,5 +1,5 @@
-export EXE_NAME = 01-blink-msp432
-export DEVICE = MSP432
+export EXE_NAME = 01-blink-stm32
+export DEVICE = STM32F103RB
 
 .PHONY: default
 default: elf

@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-void Reset_Handler(void)
+void main(void)
 {
 	while (1) ;
 }
