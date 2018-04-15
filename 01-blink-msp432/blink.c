@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "devices/msp432/wdt_a.h"
+#include "barebsp/devices/msp432/wdt_a.h"
 
 #define PORT_BASE 0x40004C00
 
