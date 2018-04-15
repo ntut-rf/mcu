@@ -20,3 +20,11 @@ To flash the executable onto the board,
 $ make flash
 ```
 sudo may be required to flash the image onto MSP432 if udev rules are not set.
+
+For the example "02-libopencm3-hello", it is required to build libopencm3 first,
+```shell
+$ git submodule init
+$ git submodule update
+$ cd libopencm3
+$ make
+```
