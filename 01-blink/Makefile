@@ -1,9 +1,6 @@
-export EXE_NAME = 01-blink
-export DEVICE = STM32F103RB
-
-.PHONY: default
-default: elf
-
-.PHONY: %
-%:
-	$(MAKE) -C.. -f barebsp/common.mk $*
+BINARY			:= blink
+DEVICE 			:= STM32F103C4T6
+OPENOCD_FILE 	:= board/st_nucleo_f103rb.cfg
+OPENCM3_DIR 	:= ../libopencm3
+OBJS			+= build/blink.o
+include ../libopencm3.mk
