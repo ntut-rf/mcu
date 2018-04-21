@@ -61,6 +61,8 @@ ifeq ($(V),99)
 TGT_LDFLAGS		+= -Wl,--print-gc-sections
 endif
 
+LD_FLAGS += --specs=nano.specs
+
 ###############################################################################
 # Used libraries
 LDLIBS		+= -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
