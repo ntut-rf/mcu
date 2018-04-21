@@ -3,6 +3,7 @@
 #include <libopencm3/stm32/usart.h>
 #include <stdio.h>
 #include <errno.h>
+int _write(int file, char *ptr, int len);
 
 int main (void)
 {
@@ -25,7 +26,7 @@ int main (void)
     /* Finally enable the USART. */
     usart_enable(USART2);
 
-    printf("Hello World!");
+    printf("Hello World!\r\n");
 
     while (1)
     {
