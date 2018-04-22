@@ -26,9 +26,9 @@ void MPU9250_setup_SPI (void)
     spi_reset(SPI1);
 
     /* Set up SPI in Master mode with:
-     * Clock baud rate: 1/64 of peripheral clock frequency
+     * Clock baud rate: 1/128 of peripheral clock frequency
      * Clock polarity: Idle low
-     * Clock phase: Data valid on 2nd clock pulse
+     * Clock phase: Data valid on 1st clock pulse
      * Data frame format: 8-bit
      * Frame format: MSB First
      */
