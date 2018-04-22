@@ -27,13 +27,13 @@ void MPU9250_setup_SPI (void)
 
     /* Set up SPI in Master mode with:
      * Clock baud rate: 1/128 of peripheral clock frequency
-     * Clock polarity: Idle low
-     * Clock phase: Data valid on 1st clock pulse
+     * Clock polarity: Idle high
+     * Clock phase: Data valid on 2st clock pulse
      * Data frame format: 8-bit
      * Frame format: MSB First
      */
-     spi_init_master(SPI1, SPI_CR1_BAUDRATE_FPCLK_DIV_128, SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
-                     SPI_CR1_CPHA_CLK_TRANSITION_1, SPI_CR1_DFF_8BIT, SPI_CR1_MSBFIRST);
+     spi_init_master(SPI1, SPI_CR1_BAUDRATE_FPCLK_DIV_128, SPI_CR1_CPOL_CLK_TO_1_WHEN_IDLE,
+                     SPI_CR1_CPHA_CLK_TRANSITION_2, SPI_CR1_DFF_8BIT, SPI_CR1_MSBFIRST);
 
     /* Set NSS management to software */
     spi_enable_software_slave_management(SPI1);
