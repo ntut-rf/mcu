@@ -22,7 +22,7 @@ int TX_mode     = true;
 int LoRa_mode   = true;
 int Continuous_mode = false;
 uint32_t TX_count = 0;
-int TX_started = 0;
+int TX_started = false;
 
 int main (void)
 {
@@ -46,6 +46,11 @@ int main (void)
     while (1)
     {
         if (USART2_SR & USART_SR_RXNE) user_input(usart_recv(USART2));
+        if (!LoRa_mode && TX_mode && Continuous_mode && TX_started)
+        {
+            SX127x_FSK_wait_ModeReady();
+            transmit_packet();
+        }
     }
 }
 
@@ -55,6 +60,7 @@ void update_mode (void)
     LoRa_mode ?
         (TX_mode ? SX127x_LoRa_TX_mode() : SX127x_LoRa_RX_mode()):
         (TX_mode ? SX127x_FSK_TX_mode() : SX127x_FSK_RX_mode());
+    if (TX_started || !Continuous_mode) transmit_packet();
     print_Mode();
 }
 
@@ -80,6 +86,7 @@ void user_input (char c)
         case 'C':
         {
             Continuous_mode = !Continuous_mode;
+            if (!Continuous_mode) TX_started = false;
             print_Mode();
         } break;
 
@@ -101,7 +108,7 @@ void user_input (char c)
             if (TX_mode)
             {
                 if (Continuous_mode) TX_started = !TX_started;
-                if (TX_started || !Continuous_mode) transmit_packet();
+                update_mode();
             }
         }
     }
@@ -200,8 +207,6 @@ void exti0_isr(void)
         if (TX_mode)
         {
             SX127x_set_Mode(SX127x_MODE_STDBY);
-            SX127x_FSK_wait_ModeReady();
-            transmit_packet();
         }
         else
         {
