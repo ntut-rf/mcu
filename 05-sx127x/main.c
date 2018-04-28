@@ -2,6 +2,8 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/usart.h>
 #include <libopencm3/stm32/spi.h>
+#include <libopencm3/stm32/exti.h>
+#include <libopencm3/cm3/nvic.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -18,6 +20,9 @@ uint8_t buffer[256];
 
 int TX_mode     = true;
 int LoRa_mode   = true;
+int Continuous_mode = false;
+uint32_t TX_count = 0;
+int TX_started = 0;
 
 int main (void)
 {
@@ -33,9 +38,10 @@ int main (void)
     printf("SX127x Version: 0x%02x %s\r\n", version, version == 0x12 ? "OK" : "ERROR");
     SX127x_FSK_init();
     SX127x_LoRa_init();
-    print_Mode();
+    update_mode();
     print_Info();
     print_Help();
+    prepare_packet("Hello world!");
 
     while (1)
     {
@@ -43,7 +49,7 @@ int main (void)
     }
 }
 
-void switch_mode (void)
+void update_mode (void)
 {
     SX127x_set_LoRaMode(LoRa_mode);
     LoRa_mode ?
@@ -59,29 +65,22 @@ void user_input (char c)
         case 'l':
         case 'L':
         {
-            LoRa_mode = true;
-            switch_mode();
-        } break;
-
-        case 'f':
-        case 'F':
-        {
-            LoRa_mode = false;
-            switch_mode();
+            LoRa_mode = !LoRa_mode;
+            update_mode();
         } break;
 
         case 't':
         case 'T':
         {
-            TX_mode = true;
-            switch_mode();
+            TX_mode = !TX_mode;
+            update_mode();
         } break;
 
-        case 'r':
-        case 'R':
+        case 'c':
+        case 'C':
         {
-            TX_mode = false;
-            switch_mode();
+            Continuous_mode = !Continuous_mode;
+            print_Mode();
         } break;
 
         case 'h':
@@ -101,8 +100,8 @@ void user_input (char c)
         {
             if (TX_mode)
             {
-                prepare_packet();
-                transmit_packet();
+                if (Continuous_mode) TX_started = !TX_started;
+                if (TX_started || !Continuous_mode) transmit_packet();
             }
         }
     }
@@ -111,11 +110,10 @@ void user_input (char c)
 void print_Info (void)
 {
     printf("Power: %u dBm\r\n", SX127x_get_Power());
-    if (LoRa_mode)
-    {
-        printf("LoRa Spreading factor: %lu\r\n", SX127x_LoRa_getSpreadingFactor());
-        printf("LoRa Payload length: %lu\r\n", SX127x_LoRa_getPayloadLength());
-    }
+    printf("LoRa Spreading factor: %lu\r\n", SX127x_LoRa_getSpreadingFactor());
+    printf("LoRa Payload length: %lu\r\n", SX127x_LoRa_getPayloadLength());
+    printf("FSK Bitrate: %lu\r\n", SX127x_FSK_get_Bitrate());
+    printf("FSK Deviation: %lu\r\n", SX127x_FSK_get_Deviation());
     printf("\r\n");
 }
 
@@ -123,11 +121,10 @@ void print_Help (void)
 {
     printf(
         "Commands:\r\n"
-        "  - L: switch to LoRa mode\r\n"
-        "  - F: switch to FSK mode\r\n"
-        "  - T: switch to TX mode\r\n"
-        "  - R: switch to RX mode\r\n"
-        "  - Space: send packet\r\n"
+        "  - L: toggle LoRa/FSK mode\r\n"
+        "  - T: switch to TX/RX mode\r\n"
+        "  - C: toggle continuous mode\r\n"
+        "  - Space: send single packet in cont. mode / toggle TX in cont. mode\r\n"
         "  - I: print status info\r\n"
         "  - H: display this help\r\n"
         "\r\n"
@@ -136,34 +133,80 @@ void print_Help (void)
 
 void print_Mode (void)
 {
-    printf("Current mode: %s %s\r\n", LoRa_mode ? "LoRa" : "FSK", TX_mode ? "TX" : "RX");
+    printf("Current mode: %s %s %s\r\n", LoRa_mode ? "LoRa" : "FSK", TX_mode ? "TX" : "RX", TX_mode ? (Continuous_mode ? "Continuous" : "Single") : "");
 }
 
-void prepare_packet (void)
+void prepare_packet (char* data)
 {
+    memcpy(buffer + 2, data, strlen(data));
 }
 
 void transmit_packet (void)
 {
+    buffer[0] = TX_count;
+    buffer[1] = TX_count >> 8;
     if (LoRa_mode)
     {
         SX127x_LoRa_transmit(SX127x_LoRa_getPayloadLength(), buffer);
-        printf("LoRa send packet: length %lu\r\n", SX127x_LoRa_getPayloadLength());
+        printf("LoRa send packet, count %lu, length %lu: ", TX_count, SX127x_LoRa_getPayloadLength());
     }
     else
     {
         SX127x_FSK_fifo_clear();
         SX127x_writen(SX127x_Fifo, 64, buffer); //SX127x_FSK_fifo_write();
+        //SX127x_set_Mode(RFM_MODE_FSTX);
         SX127x_set_Mode(SX127x_MODE_TX);
-        printf("FSK send packet\r\n");
+        printf("FSK send packet, count %lu: ", TX_count);
     }
+    printf("%s\r\n", (char*)buffer + 2);
+    TX_count++;
 }
 
-void read_packet (void)
+void receive_packet (void)
 {
-    SX127x_LoRa_read(SX127x_LoRa_getPayloadLength(), buffer);
+    if (LoRa_mode)
+    {
+        SX127x_LoRa_read(SX127x_LoRa_getPayloadLength(), buffer);
+        uint32_t RX_count = buffer[0] | (buffer[1] << 8);
+        printf("LoRa receive packet, count %lu ", RX_count);
+    }
+    else
+    {
+        SX127x_readn(SX127x_Fifo, 64, buffer);
+        SX127x_FSK_fifo_clear();
+        uint32_t RX_count = buffer[0] | (buffer[1] << 8);
+        printf("FSK receive packet, count %lu:", RX_count);
+    }
+    printf("%s\r\n", (char*)buffer + 2);
 }
 
-void decode_packet (void)
+void exti0_isr(void)
 {
+    exti_reset_request(EXTI0);
+    if (LoRa_mode)
+    {
+        if (TX_mode)
+        {
+            if (Continuous_mode && TX_started) transmit_packet();
+        }
+        else
+        {
+            receive_packet();
+        }
+        SX127x_LoRa_flags_clear();
+    }
+    else
+    {
+        if (TX_mode)
+        {
+            SX127x_set_Mode(SX127x_MODE_STDBY);
+            SX127x_FSK_wait_ModeReady();
+            transmit_packet();
+        }
+        else
+        {
+            SX127x_set_Mode(SX127x_MODE_RX);
+            receive_packet();
+        }
+    }
 }

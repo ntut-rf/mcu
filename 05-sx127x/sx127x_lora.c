@@ -90,7 +90,7 @@ void SX127x_LoRa_transmit (int length, uint8_t* buffer)
 
 void SX127x_LoRa_read (int length, uint8_t* buffer)
 {
-    SX127x_write(SX127x_LoRa_FifoAddrPtr, SX127x_LoRa_FifoRxCurrentAddr);
+    SX127x_write(SX127x_LoRa_FifoAddrPtr, SX127x_read(SX127x_LoRa_FifoRxCurrentAddr));
     for (int i = 0; i < length; i++) buffer[i] = SX127x_read(SX127x_Fifo);
 }
 

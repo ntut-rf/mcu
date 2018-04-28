@@ -35,12 +35,12 @@ void SX127x_set_DioMapping (char pin, char mapping)
     if (loraMode) SX127x_set_LoRaMode(false);
     switch (pin)
     {
-        case 0: SX127x_writef(SX127x_DioMapping1, 0xC0, mapping & 0b11); break;
-        case 1: SX127x_writef(SX127x_DioMapping1, 0x30, mapping & 0b11); break;
-        case 2: SX127x_writef(SX127x_DioMapping1, 0x0C, mapping & 0b11); break;
-        case 3: SX127x_writef(SX127x_DioMapping1, 0x03, mapping & 0b11); break;
-        case 4: SX127x_writef(SX127x_DioMapping2, 0xC0, mapping & 0b11); break;
-        case 5: SX127x_writef(SX127x_DioMapping2, 0x30, mapping & 0b11); break;
+        case 0: SX127x_writef(SX127x_DioMapping1, 0xC0, mapping); break;
+        case 1: SX127x_writef(SX127x_DioMapping1, 0x30, mapping); break;
+        case 2: SX127x_writef(SX127x_DioMapping1, 0x0C, mapping); break;
+        case 3: SX127x_writef(SX127x_DioMapping1, 0x03, mapping); break;
+        case 4: SX127x_writef(SX127x_DioMapping2, 0xC0, mapping); break;
+        case 5: SX127x_writef(SX127x_DioMapping2, 0x30, mapping); break;
     }
     if (loraMode) SX127x_set_LoRaMode(true);
 }

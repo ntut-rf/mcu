@@ -1,7 +1,10 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/spi.h>
+#include <libopencm3/stm32/exti.h>
+#include <libopencm3/cm3/nvic.h>
 #include <stdint.h>
+#include <stdio.h>
 #include "sx127x.h"
 
 #define RESET       GPIO1
@@ -11,15 +14,19 @@
 #define SPI1_MOSI   GPIO7
 
 static void SX127x_setup_SPI (void);
+static void SX127x_setup_EXTI (void);
 
 void SX127x_init (void)
 {
     /* RESET pin */
     rcc_periph_clock_enable(RCC_GPIOA);
     gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, RESET);
+    gpio_clear(GPIOA, RESET);
+    for (int i = 0; i < 1000000; i++) ;
     gpio_set(GPIOA, RESET);
 
     SX127x_setup_SPI();
+    SX127x_setup_EXTI();
 }
 
 static void SX127x_setup_SPI (void)
@@ -54,6 +61,28 @@ static void SX127x_setup_SPI (void)
     /* Enable SPI1 */
     spi_enable(SPI1);
 }
+
+void SX127x_setup_EXTI (void)
+{
+    /* Enable GPIOA clock. */
+    rcc_periph_clock_enable(RCC_GPIOA);
+
+	/* Enable AFIO clock. */
+	rcc_periph_clock_enable(RCC_AFIO);
+
+	/* Enable EXTI0 interrupt. */
+	nvic_enable_irq(NVIC_EXTI0_IRQ);
+
+	/* Set GPIO0 (in GPIO port A) to 'input open-drain'. */
+	gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT, GPIO0);
+
+	/* Configure the EXTI subsystem. */
+	exti_select_source(EXTI0, GPIOA);
+	exti_set_trigger(EXTI0, EXTI_TRIGGER_RISING);
+	exti_enable_request(EXTI0);
+}
+
+
 
 uint8_t SX127x_read (uint8_t addr)
 {

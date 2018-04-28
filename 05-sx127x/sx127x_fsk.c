@@ -121,7 +121,7 @@ void SX127x_FSK_TX_mode (void)
 
 void SX127x_FSK_RX_mode (void)
 {
-    SX127x_set_LoRaMode(0);
+    SX127x_set_LoRaMode(false);
     SX127x_set_Mode(SX127x_MODE_STDBY);
     SX127x_set_DioMapping(0, 0x00);
     SX127x_set_DioMapping(1, 0x00);
