@@ -1,0 +1,122 @@
+#ifndef SX127x_REG_H
+#define SX127x_REG_H
+
+/* Common registers */
+#define SX127x_Fifo        0x00
+#define SX127x_OpMode      0x01
+    #define SX127x_OpMode_Mode      0x07
+    #define SX127x_OpMode_LoRaMode  0x80
+#define SX127x_FrMsb       0x06
+#define SX127x_FrMid       0x07
+#define SX127x_FrLsb       0x08
+#define SX127x_PaConfig    0x09
+#define SX127x_PaRamp      0x0A
+#define SX127x_PaOcp       0x0B
+#define SX127x_Lna         0x0C
+#define SX127x_DioMapping1 0x40
+#define SX127x_DioMapping2 0x41
+#define SX127x_Version     0x42
+#define SX127x_Tcxo        0x4B
+#define SX127x_PaDac       0x4D
+#define SX127x_FormerTemp  0x5B
+#define SX127x_AgcRef      0x61
+#define SX127x_AgcThresh1  0x62
+#define SX127x_AgcThresh2  0x63
+#define SX127x_AgcThresh3  0x64
+
+/* LoRa registers */
+#define SX127x_LoRa_FifoAddrPtr         0x0D
+#define SX127x_LoRa_FifoTxBaseAddr      0x0E
+#define SX127x_LoRa_FifoRxBaseAddr      0x0F
+#define SX127x_LoRa_FifoRxCurrentAddr   0x10
+#define SX127x_LoRa_IrqFlagsMask        0x11
+#define SX127x_LoRa_IrqFlags            0x12
+#define SX127x_LoRa_RxNbBytes           0x13
+#define SX127x_LoRa_RxHeaderCntValueMsb 0x14
+#define SX127x_LoRa_RxHeaderCntValueLsb 0x15
+#define SX127x_LoRa_RxPacketCntValueMsb 0x16
+#define SX127x_LoRa_RxPacketCntValueLsb 0x17
+#define SX127x_LoRa_ModemStat           0x18
+#define SX127x_LoRa_PktSnrValue         0x19
+#define SX127x_LoRa_PktRssiValue        0x1A
+#define SX127x_LoRa_RssiValue           0x1B
+#define SX127x_LoRa_HopChannel          0x1C
+#define SX127x_LoRa_ModemConfig         0x1D
+#define SX127x_LoRa_ModemConfig2        0x1E
+#define SX127x_LoRa_SymbTimeoutLsb      0x1F
+#define SX127x_LoRa_PreambleMsb         0x20
+#define SX127x_LoRa_PreambleLsb         0x21
+#define SX127x_LoRa_PayloadLength       0x22
+#define SX127x_LoRa_MaxPayloadLength    0x23
+#define SX127x_LoRa_HopPeriod           0x24
+#define SX127x_LoRa_FifoRxByteAddr      0x25
+#define SX127x_LoRa_ModemConfig3        0x26
+#define SX127x_LoRa_FeiMsb              0x28
+#define SX127x_LoRa_FeiMid              0x29
+#define SX127x_LoRa_FeiLsb              0x2A
+#define SX127x_LoRa_RssiWideband        0x2C
+#define SX127x_LoRa_DetectOptimize      0x31
+#define SX127x_LoRa_InvertIQ            0x33
+#define SX127x_LoRa_DetectionThreshold  0x37
+#define SX127x_LoRa_SyncWord            0x39
+
+/* FSK/OOK registers */
+#define SX127x_FSK_BitrateMsb     0x02
+#define SX127x_FSK_BitrateLsb     0x03
+#define SX127x_FSK_FdevMsb        0x04
+#define SX127x_FSK_FdevLsb        0x05
+#define SX127x_FSK_RxConfig       0x0D
+#define SX127x_FSK_RssiConfig     0x0E
+#define SX127x_FSK_RssiCollision  0x0F
+#define SX127x_FSK_RssiThresh     0x10
+#define SX127x_FSK_RssiValue      0x11
+#define SX127x_FSK_RxBw           0x12
+#define SX127x_FSK_AfcBw          0x13
+#define SX127x_FSK_OokPeak        0x14
+#define SX127x_FSK_OokFix         0x15
+#define SX127x_FSK_OokAvg         0x16
+#define SX127x_FSK_Reserved17     0x17
+#define SX127x_FSK_Reserved18     0x18
+#define SX127x_FSK_Reserved19     0x19
+#define SX127x_FSK_AfcFei         0x1A
+#define SX127x_FSK_AfcMsb         0x1B
+#define SX127x_FSK_AfcLsb         0x1C
+#define SX127x_FSK_FeiMsb         0x1D
+#define SX127x_FSK_FeiLsb         0x1E
+#define SX127x_FSK_PreambleDetect 0x1F
+#define SX127x_FSK_RxTimeout1     0x20
+#define SX127x_FSK_RxTimeout2     0x21
+#define SX127x_FSK_RxTimeout3     0x22
+#define SX127x_FSK_RxDelay        0x23
+#define SX127x_FSK_Osc            0x24
+#define SX127x_FSK_PreambleMsb    0x25
+#define SX127x_FSK_PreambleLsb    0x26
+#define SX127x_FSK_SyncConfig     0x27
+#define SX127x_FSK_SyncValue1     0x28
+#define SX127x_FSK_SyncValue2     0x29
+#define SX127x_FSK_SyncValue3     0x2A
+#define SX127x_FSK_SyncValue4     0x2B
+#define SX127x_FSK_SyncValue5     0x2C
+#define SX127x_FSK_SyncValue6     0x2D
+#define SX127x_FSK_SyncValue7     0x2E
+#define SX127x_FSK_SyncValue8     0x2F
+#define SX127x_FSK_PacketConfig1  0x30
+#define SX127x_FSK_PacketConfig2  0x31
+#define SX127x_FSK_PayloadLength  0x32
+#define SX127x_FSK_NodeAdrs       0x33
+#define SX127x_FSK_BroadcastAdrs  0x34
+#define SX127x_FSK_FifoThresh     0x35
+#define SX127x_FSK_SeqConfig1     0x36
+#define SX127x_FSK_SeqConfig2     0x37
+#define SX127x_FSK_TimerResol     0x38
+#define SX127x_FSK_Timer1Coef     0x39
+#define SX127x_FSK_Timer2Coef     0x3A
+#define SX127x_FSK_ImageCal       0x3B
+#define SX127x_FSK_Temp           0x3C
+#define SX127x_FSK_LowBat         0x3D
+#define SX127x_FSK_IrqFlags1      0x3E
+#define SX127x_FSK_IrqFlags2      0x3F
+#define SX127x_FSK_PllHop         0x44
+#define SX127x_FSK_BitRateFrac    0x5D
+
+#endif

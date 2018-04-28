@@ -64,11 +64,11 @@ void MPU9250_write (uint8_t addr, uint8_t val)
     spi_xfer(SPI1, addr);
     spi_xfer(SPI1, val);
     gpio_set(GPIOA, SPI1_CS);
-    uint8_t rval = MPU9250_read(addr);
-    if (rval == val)
-        printf("Write 0x%02x = 0x%02x ok\n", addr, val);
-    else
-        printf("Write 0x%02x = 0x%02x FAIL = 0x%02x\n", addr, val, rval);
+    // uint8_t rval = MPU9250_read(addr);
+    // if (rval == val)
+    //     printf("Write 0x%02x = 0x%02x ok\n", addr, val);
+    // else
+    //     printf("Write 0x%02x = 0x%02x FAIL = 0x%02x\n", addr, val, rval);
 }
 
 void MPU9250_writef (uint8_t addr, uint8_t mask, uint8_t val)
