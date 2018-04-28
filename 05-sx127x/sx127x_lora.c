@@ -1,8 +1,12 @@
 #include <stdint.h>
+#include <stdbool.h>
 #include "sx127x.h"
 #include "sx127x_reg.h"
 #include "sx127x_common.h"
 #include "sx127x_lora.h"
+
+static uint32_t LoRa_PayloadLength;
+static uint32_t LoRa_SpreadingFactor;
 
 void SX127x_LoRa_TX_mode (void)
 {
@@ -43,16 +47,12 @@ void SX127x_LoRa_set_SpreadingFactor (int spreadingFactor)
         SX127x_write(SX127x_LoRa_DetectionThreshold, 0x0A);
     }
     if (mode != SX127x_MODE_STDBY) SX127x_set_Mode(mode);
+    LoRa_SpreadingFactor = spreadingFactor;
 }
 
-void SX127x_LoRa_set_Power (int power)
+uint32_t SX127x_LoRa_getSpreadingFactor (void)
 {
-    int mode = SX127x_get_Mode();
-    if (mode != SX127x_MODE_STDBY) SX127x_set_Mode(SX127x_MODE_STDBY);
-    if (power < 2) power = 2;
-    if (power > 17) power = 17;
-    SX127x_writef(SX127x_PaConfig, 0x0F, power - 2);
-    if (mode != SX127x_MODE_STDBY) SX127x_set_Mode(mode);
+    return LoRa_SpreadingFactor;
 }
 
 void SX127x_LoRa_set_PayloadLength (int payloadLength)
@@ -63,6 +63,12 @@ void SX127x_LoRa_set_PayloadLength (int payloadLength)
     if (payloadLength > 255)    payloadLength = 255;
     SX127x_write(SX127x_LoRa_PayloadLength, payloadLength);
     if (mode != SX127x_MODE_STDBY) SX127x_set_Mode(mode);
+    LoRa_PayloadLength = payloadLength;
+}
+
+uint32_t SX127x_LoRa_getPayloadLength(void)
+{
+    return LoRa_PayloadLength;
 }
 
 void SX127x_LoRa_set_CodingRate (int rate)
@@ -75,14 +81,14 @@ void SX127x_LoRa_set_Bandwidth (int bw)
     SX127x_writef(SX127x_LoRa_ModemConfig, 0xF0, bw);
 }
 
-void SX127x_LoRa_transmit (int length, char* buffer)
+void SX127x_LoRa_transmit (int length, uint8_t* buffer)
 {
     SX127x_write(SX127x_LoRa_FifoAddrPtr, 0x00);
     for (int i = 0; i < length; i++) SX127x_write(SX127x_Fifo, buffer[i]);
     SX127x_set_Mode(SX127x_MODE_TX);
 }
 
-void SX127x_LoRa_read (int length, char* buffer)
+void SX127x_LoRa_read (int length, uint8_t* buffer)
 {
     SX127x_write(SX127x_LoRa_FifoAddrPtr, SX127x_LoRa_FifoRxCurrentAddr);
     for (int i = 0; i < length; i++) buffer[i] = SX127x_read(SX127x_Fifo);
@@ -100,16 +106,16 @@ void SX127x_LoRa_flags_clear (void)
 
 void SX127x_LoRa_init (void)
 {
-    SX127x_set_LoRaMode(1);
+    SX127x_set_LoRaMode(true);
     SX127x_write(SX127x_PaConfig, 0xF0); // PA_BOOST pin
     SX127x_write(SX127x_PaOcp, 0x3F); // Overcurrent protection I_max = 240mA
     SX127x_writef(SX127x_LoRa_ModemConfig,  0x01, 1); // Implicit Header mode
     SX127x_writef(SX127x_LoRa_ModemConfig2, 0x04, 1); // RX payload CRC on
 
     /* Default settings */
+    SX127x_set_Power(17);
     SX127x_LoRa_set_CodingRate(0b001);
     SX127x_LoRa_set_Bandwidth(0b1001);
-    SX127x_LoRa_set_Power(17);
     SX127x_LoRa_set_SpreadingFactor(6);
     SX127x_LoRa_set_PayloadLength(255);
 }
@@ -119,7 +125,7 @@ void SX127x_LoRa_fifo_reset (void)
     SX127x_write(SX127x_LoRa_FifoAddrPtr, 0x00);
 }
 
-void SX127x_LoRa_fifo_write (char c)
+void SX127x_LoRa_fifo_write (uint8_t c)
 {
     SX127x_write(SX127x_Fifo, c);
 }

@@ -31,7 +31,7 @@ static void SX127x_setup_SPI (void)
     /* Configure GPIOs: CS=PA4, SCK=PA5, MISO=PA6 and MOSI=PA7 */
     gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, SPI1_CS);
     gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, SPI1_SCK | SPI1_MOSI);
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT, SPI1_MISO);
+    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, SPI1_MISO);
 
     /* Reset SPI, SPI_CR1 register cleared, SPI is disabled */
     spi_reset(SPI1);

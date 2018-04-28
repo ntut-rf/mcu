@@ -14,6 +14,9 @@ void    SX127x_set_LoRaMode (int loraMode);
 uint8_t SX127x_get_LoRaMode (void);
 void    SX127x_set_DioMapping (char pin, char mapping);
 void    SX127x_set_PaDac (int on);
+void    SX127x_set_Power (int power);
+uint8_t SX127x_get_Power (void);
+const char* SX127x_Mode_str (int mode);
 
 #define    SX127x_MODE_SLEEP      0
 #define    SX127x_MODE_STDBY      1

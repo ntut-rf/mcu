@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 #include "sx127x.h"
 #include "sx127x_reg.h"
 #include "sx127x_common.h"
@@ -7,11 +8,13 @@
 #define SX127x_FXOSC 32000000
 #define SX127x_FSTEP 61
 
-#include <stdio.h>
+static uint32_t FSK_Bitrate;
+static uint32_t FSK_Deviation;
+static uint32_t FSK_PayloadLength;
 
 void SX127x_FSK_init (void)
 {
-    SX127x_set_LoRaMode(0);
+    SX127x_set_LoRaMode(false);
     SX127x_FSK_set_Bitrate(250000);
     SX127x_FSK_set_Deviation(62500);
     SX127x_writef(SX127x_FSK_PacketConfig2, 1 << 6, 1); // Packet mode
@@ -51,11 +54,12 @@ void SX127x_FSK_init (void)
 
 void SX127x_FSK_set_Bitrate (int bitrate)
 {
+    FSK_Bitrate = bitrate;
     if (bitrate <= 299065)
     {
-        SX127x_write(SX127x_FSK_BitrateMsb, (SX127x_FXOSC / bitrate) >> 8);
-        SX127x_write(SX127x_FSK_BitrateLsb, SX127x_FXOSC / bitrate);
-        SX127x_write(SX127x_FSK_BitRateFrac, (SX127x_FXOSC % bitrate) * 16 / bitrate);
+        SX127x_write(SX127x_FSK_BitrateMsb, (SX127x_FXOSC / FSK_Bitrate) >> 8);
+        SX127x_write(SX127x_FSK_BitrateLsb, SX127x_FXOSC / FSK_Bitrate);
+        SX127x_write(SX127x_FSK_BitRateFrac, (SX127x_FXOSC % FSK_Bitrate) * 16 / FSK_Bitrate);
     }
     else
     {
@@ -65,16 +69,33 @@ void SX127x_FSK_set_Bitrate (int bitrate)
     }
 }
 
+uint32_t SX127x_FSK_get_Bitrate (void)
+{
+    return FSK_Bitrate;
+}
+
 void SX127x_FSK_set_Deviation (int deviation)
 {
-    SX127x_write(SX127x_FSK_FdevMsb, (deviation / SX127x_FSTEP) >> 8);
-    SX127x_write(SX127x_FSK_FdevLsb, deviation / SX127x_FSTEP);
+    FSK_Deviation = deviation;
+    SX127x_write(SX127x_FSK_FdevMsb, (FSK_Deviation / SX127x_FSTEP) >> 8);
+    SX127x_write(SX127x_FSK_FdevLsb, FSK_Deviation / SX127x_FSTEP);
+}
+
+uint32_t SX127x_FSK_get_Deviation (void)
+{
+    return FSK_Deviation;
 }
 
 void SX127x_FSK_set_PayloadLength (int payloadLength)
 {
-    SX127x_writef(SX127x_FSK_PacketConfig2, 0x7, (payloadLength >> 8) & 0b111);
-    SX127x_write(SX127x_FSK_PayloadLength , payloadLength);
+    FSK_PayloadLength = payloadLength;
+    SX127x_writef(SX127x_FSK_PacketConfig2, 0x7, (FSK_PayloadLength >> 8) & 0b111);
+    SX127x_write(SX127x_FSK_PayloadLength , FSK_PayloadLength);
+}
+
+uint32_t SX127x_FSK_get_PayloadLength (void)
+{
+    return FSK_PayloadLength;
 }
 
 void SX127x_FSK_set_FifoThreshold (int threshold)
@@ -90,7 +111,7 @@ void SX127x_FSK_wait_TxReady (void)
 
 void SX127x_FSK_TX_mode (void)
 {
-    SX127x_set_LoRaMode(0);
+    SX127x_set_LoRaMode(false);
     SX127x_set_Mode(SX127x_MODE_STDBY);
     SX127x_set_DioMapping(0, 0x00);
     SX127x_set_DioMapping(3, 0x01);
