@@ -103,6 +103,30 @@ void user_input (char c)
             print_Info();
         } break;
 
+        case 'a':
+        case 'A':
+        {
+            if (LoRa_mode)
+            {
+                uint8_t spreadingFactor = SX127x_LoRa_getSpreadingFactor();
+                if (spreadingFactor > 6) spreadingFactor--;
+                SX127x_LoRa_set_SpreadingFactor(spreadingFactor);
+                print_Info();
+            }
+        } break;
+
+        case 's':
+        case 'S':
+        {
+            if (LoRa_mode)
+            {
+                uint8_t spreadingFactor = SX127x_LoRa_getSpreadingFactor();
+                if (spreadingFactor < 12) spreadingFactor++;
+                SX127x_LoRa_set_SpreadingFactor(spreadingFactor);
+                print_Info();
+            }
+        } break;
+
         case ' ':
         {
             if (TX_mode)
@@ -132,6 +156,7 @@ void print_Help (void)
         "  - T: switch to TX/RX mode\r\n"
         "  - C: toggle continuous mode\r\n"
         "  - Space: send single packet in cont. mode / toggle TX in cont. mode\r\n"
+        "  - A/S: decrease/increase LoRa spreading factor\r\n"
         "  - I: print status info\r\n"
         "  - H: display this help\r\n"
         "\r\n"
